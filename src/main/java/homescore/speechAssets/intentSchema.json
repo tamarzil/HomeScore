@@ -1,0 +1,87 @@
+{
+  "intents": [
+    {
+      "intent": "SaveEventIntent",
+      "slots": [
+        {
+          "name": "Name",
+          "type": "AMAZON.US_FIRST_NAME"
+        },
+        {
+          "name": "Action",
+          "type": "TASKS"
+        }
+      ]
+    },
+    {
+      "intent": "LastOneIntent",
+      "slots": [
+        {
+          "name": "Action",
+          "type": "TASKS"
+        }
+      ]
+    },
+    {
+      "intent": "LastTimeIntent",
+      "slots": [
+        {
+          "name": "Name",
+          "type": "AMAZON.US_FIRST_NAME"
+        },
+        {
+          "name": "Action",
+          "type": "TASKS"
+        }
+      ]
+    },
+    {
+      "intent": "LastTimeGeneralIntent",
+      "slots": [
+        {
+          "name": "Action",
+          "type": "TASKS"
+        }
+      ]
+    },
+    {
+      "intent": "HowManyTimesIntent",
+      "slots": [
+        {
+          "name": "Name",
+          "type": "AMAZON.US_FIRST_NAME"
+        },
+        {
+          "name": "Action",
+          "type": "TASKS"
+        },
+        {
+          "name": "Range",
+          "type": "AMAZON.DATE"
+        }
+      ]
+    },
+    {
+      "intent": "HowManyTimesGeneralIntent",
+      "slots": [
+        {
+          "name": "Action",
+          "type": "TASKS"
+        },
+        {
+          "name": "Range",
+          "type": "AMAZON.DATE"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}
