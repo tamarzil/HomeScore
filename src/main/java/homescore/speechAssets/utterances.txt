@@ -34,6 +34,9 @@ HowManyTimesIntent check how many times {Name} {Action} so far
 HowManyTimesGeneralIntent how many times did we {Action} {Range}
 HowManyTimesGeneralIntent how many times did we {Action}
 HowManyTimesGeneralIntent how many times did we {Action} so far
+HowManyTimesGeneralIntent how many times we {Action} {Range}
+HowManyTimesGeneralIntent how many times we {Action}
+HowManyTimesGeneralIntent how many times we {Action} so far
 HowManyTimesGeneralIntent check how many times we {Action} {Range}
 HowManyTimesGeneralIntent check how many times we {Action}
 HowManyTimesGeneralIntent check how many times we {Action} so far
