@@ -44,12 +44,12 @@ public class HomeScoreManager {
             result = dal.saveEventsData(dataItem);
 
         } catch (Exception ex) {
-            log.error("failed to save new event for customer ID: %s, name: %s, action: %s", customerId, name, action);
+            log.error(String.format("failed to save new event for customer ID: %s, name: %s, action: %s", customerId, name, action));
             return null;
         }
 
         if (!result) {
-            log.error("Failed to save new event for customer ID: %s, name: %s, action: %s", customerId, name, action);
+            log.error(String.format("Failed to save new event for customer ID: %s, name: %s, action: %s", customerId, name, action));
             return null;
         }
 

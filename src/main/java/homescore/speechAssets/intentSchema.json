@@ -75,6 +75,12 @@
       ]
     },
     {
+      "intent": "AMAZON.NoIntent"
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
       "intent": "AMAZON.HelpIntent"
     },
     {

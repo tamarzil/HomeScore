@@ -1,6 +1,8 @@
 package homescore;
 
+import com.amazon.speech.speechlet.Session;
 import com.amazon.speech.speechlet.SpeechletResponse;
+import com.amazon.speech.ui.OutputSpeech;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
@@ -208,6 +210,46 @@ public class ResponseHandler {
     public SpeechletResponse getExitResponse() {
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
         speech.setText("Goodbye");
+        return SpeechletResponse.newTellResponse(speech);
+    }
+
+    public SpeechletResponse getNewEventConfirmResponse(ParsedRequest request) {
+        String speechText = String.format("I heard: %s %s. Is that correct?", request.getName(), request.getAction());
+
+        // Create the Simple card content
+        SimpleCard card = new SimpleCard();
+        card.setTitle(SKILL_NAME);
+        card.setContent(speechText);
+
+        // Create the plain text output.
+        PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
+        speech.setText(speechText);
+
+        // Create re-prompt
+        PlainTextOutputSpeech repromptSpeech = new PlainTextOutputSpeech();
+        repromptSpeech.setText("I heard: %s %s. Is that correct? say yes or no.");
+        Reprompt reprompt = new Reprompt();
+        reprompt.setOutputSpeech(repromptSpeech);
+
+        return SpeechletResponse.newAskResponse(speech, reprompt, card);
+    }
+
+    public SpeechletResponse getNewEventIncorrectResponse() {
+        String speechText = "Oops, my bad. Can you say it again please?";
+        PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
+        speech.setText(speechText);
+
+        PlainTextOutputSpeech repromptSpeech = new PlainTextOutputSpeech();
+        repromptSpeech.setText("Do you still want me to remember something you did?");
+        Reprompt reprompt = new Reprompt();
+        reprompt.setOutputSpeech(repromptSpeech);
+
+        return SpeechletResponse.newAskResponse(speech, reprompt);
+    }
+
+    public SpeechletResponse getIrrelevantResponse(String phrase) {
+        PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
+        speech.setText(String.format("%s is irrelevant here.", phrase));
         return SpeechletResponse.newTellResponse(speech);
     }
 }

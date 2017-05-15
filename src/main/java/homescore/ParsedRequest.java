@@ -8,11 +8,17 @@ import homescore.Exception.HomeScoreMissingActionException;
 import homescore.Exception.HomeScoreMissingInitialData;
 import org.slf4j.Logger;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class ParsedRequest {
 
     private static final String SLOT_NAME = "Name";
     private static final String SLOT_ACTION = "Action";
     private static final String SLOT_RANGE = "Range";
+    public static final Set<String> builtInIntentNames = new HashSet(Arrays.asList(
+            new String[] {"AMAZON.HelpIntent", "AMAZON.StopIntent", "AMAZON.CancelIntent", "AMAZON.YesIntent", "AMAZON.NoIntent"}));
 
     private String intentName;
     private String customerId;
@@ -38,9 +44,7 @@ public class ParsedRequest {
             throw new HomeScoreMissingInitialData("session or intent name missing");
         }
 
-        if (this.intentName.equalsIgnoreCase("AMAZON.HelpIntent")
-                || this.intentName.equals("AMAZON.StopIntent")
-                || this.intentName.equals("AMAZON.CancelIntent"))
+        if (builtInIntentNames.contains(this.intentName))
             return;
 
         this.action = intent.getSlot(SLOT_ACTION).getValue();
@@ -86,5 +90,9 @@ public class ParsedRequest {
 
     public DateRange getRange() {
         return range;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

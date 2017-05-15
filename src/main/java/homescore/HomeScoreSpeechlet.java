@@ -50,6 +50,7 @@ public class HomeScoreSpeechlet implements Speechlet {
 
         initializeComponents();
 
+        // parse the request
         ParsedRequest parsed = null;
         try {
             parsed = new ParsedRequest(request, session, log);
@@ -58,18 +59,35 @@ public class HomeScoreSpeechlet implements Speechlet {
             return responseHandler.getMissingDataResponse();
         }
 
-        if (parsed.getIntentName().equals("AMAZON.HelpIntent"))
-            return responseHandler.getHelpResponse();
-        if (parsed.getIntentName().equals("AMAZON.StopIntent") || parsed.getIntentName().equals("AMAZON.CancelIntent"))
-            return responseHandler.getExitResponse();
+        // handle built in intents
+        switch (parsed.getIntentName()) {
+            case "AMAZON.YesIntent":
+                if (session.getAttributes().isEmpty())
+                    return responseHandler.getIrrelevantResponse("Yes");
+                populateParsedRequestFromSession(parsed, session);
+                HomeEvent confirmedEvent = mgr.handleSaveEvent(parsed.getCustomerId(), parsed.getName(), parsed.getAction());
+                return responseHandler.getNewEventResponse(confirmedEvent);
+            case "AMAZON.NoIntent":
+                if (session.getAttributes().isEmpty())
+                    return responseHandler.getIrrelevantResponse("No");
+                clearSessionAttributes(session);
+                return responseHandler.getNewEventIncorrectResponse();
+            case "AMAZON.HelpIntent":
+                return responseHandler.getHelpResponse();
+            case "AMAZON.StopIntent":
+            case "AMAZON.CancelIntent":
+                return responseHandler.getExitResponse();
+        }
 
+        // adjust tense and form
         try {
             if (tenseConverter != null)
                 parsed.setAction(tenseConverter.convertToPastTense(parsed.getAction()));
         } catch (IllegalArgumentException ex) {
-            log.warn("The action text does not contain a verb: %s", parsed.getAction());
+            log.warn(String.format("The action text does not contain a verb: %s", parsed.getAction()));
         }
 
+        // handle custom intents
         try {
             HomeEvent event;
             Integer times;
@@ -77,8 +95,8 @@ public class HomeScoreSpeechlet implements Speechlet {
                 case "SaveEventIntent":
                     if (parsed.getName().equalsIgnoreCase("I") || parsed.getName().equalsIgnoreCase("we"))
                         return responseHandler.getBadNameResponse();
-                    event = mgr.handleSaveEvent(parsed.getCustomerId(), parsed.getName(), parsed.getAction());
-                    return responseHandler.getNewEventResponse(event);
+                    saveParsedRequestToSession(parsed, session);
+                    return responseHandler.getNewEventConfirmResponse(parsed);
                 case "LastOneIntent":
                     event = mgr.handleLastEventQuery(parsed.getCustomerId(), parsed.getAction());
                     return responseHandler.getLastOneResponse(event, parsed.getAction());
@@ -117,11 +135,27 @@ public class HomeScoreSpeechlet implements Speechlet {
             try {
                 tenseConverter = new TenseConverter();
             } catch (Exception e) {
-                log.error("Failed to create TenseConverter. Error: %s", e.getMessage());
+                log.error("Failed to create TenseConverter. Error: {}", e.getMessage());
                 tenseConverter = null;
             }
             responseHandler = new ResponseHandler(tenseConverter);
         }
+    }
+
+    private void saveParsedRequestToSession(ParsedRequest parsedRequest, Session session) {
+        session.setAttribute("name", parsedRequest.getName());
+        session.setAttribute("action", parsedRequest.getAction());
+    }
+
+    private void populateParsedRequestFromSession(ParsedRequest parsedRequest, Session session) {
+        parsedRequest.setName(session.getAttribute("name").toString());
+        parsedRequest.setAction(session.getAttribute("action").toString());
+        clearSessionAttributes(session);
+    }
+
+    private void clearSessionAttributes(Session session) {
+        session.removeAttribute("name");
+        session.removeAttribute("action");
     }
 }
 
